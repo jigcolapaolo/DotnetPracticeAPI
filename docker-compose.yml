@@ -1,0 +1,30 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: DotnetPracticeAPI/Dockerfile
+    env_file: .env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=DotnetPracticeAPI;User Id=SA;Password=${DB_PASSWORD};TrustServerCertificate=true
+      - Jwt__Key=${JWT_KEY}
+      - Jwt__Issuer=${JWT_ISSUER}
+      - Jwt__Audience=${JWT_AUDIENCE}
+      - Jwt__DurationInMinutes=60
+      - ConnectionStrings__RedisConnection=${REDIS_CONNECTION}
+    depends_on:
+      - redis
+      - sqlserver
+    ports:
+      - "5000:80"
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    env_file: .env
+    environment:
+      SA_PASSWORD: ${DB_PASSWORD}
+      ACCEPT_EULA: "Y"
+
+  redis:
+    image: redis:latest
