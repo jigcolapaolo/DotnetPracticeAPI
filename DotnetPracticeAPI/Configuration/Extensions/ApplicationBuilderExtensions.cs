@@ -88,12 +88,9 @@ namespace Configuration.Extensions
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
 
-            if (!db.Database.CanConnect())
-            {
-                db.Database.EnsureCreated();
-            }
+            await db.Database.MigrateAsync();
 
-            if (!db.Users.Any())
+            if (!await db.Users.AnyAsync())
             {
                 await DbSeeder.Seed(db, userManager, roleManager);
             }
