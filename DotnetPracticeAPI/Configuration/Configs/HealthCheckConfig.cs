@@ -27,10 +27,8 @@ namespace Configuration.Configs
             }
             else
             {
-                var options = RedisConfig.GetRedisProductionOptions(config);
-                var redis = ConnectionMultiplexer.Connect(options);
 
-                Log.Information($"OPTIONS PASSWORD: {options.Password}");
+                var redis = ConnectionMultiplexer.Connect(config.GetConnectionString("RedisConnection")!);
 
                 services.AddHealthChecks()
                     .AddNpgSql(

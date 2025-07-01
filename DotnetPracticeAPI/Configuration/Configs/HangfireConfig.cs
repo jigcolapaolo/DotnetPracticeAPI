@@ -16,7 +16,7 @@ namespace Configuration.Configs
                 if (env.IsDevelopment())
                     multiplexer = ConnectionMultiplexer.Connect(config.GetConnectionString("RedisConnection")!);
                 else
-                    multiplexer = ConnectionMultiplexer.Connect(RedisConfig.GetRedisProductionOptions(config));
+                    multiplexer = ConnectionMultiplexer.Connect(config.GetConnectionString("RedisConnection")!);
 
 
                 if (multiplexer.IsConnected)
