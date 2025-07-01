@@ -12,7 +12,7 @@ namespace Configuration.Configs
 {
     public static class AuthConfig
     {
-        public static IServiceCollection AddAuthConfig (this IServiceCollection services, IConfiguration config)
+        public static IServiceCollection AddAuthConfig (this IServiceCollection services, IConfiguration config, IHostEnvironment env)
         {
             services.AddIdentity<User, IdentityRole<Guid>>()
                 .AddEntityFrameworkStores<AppDbContext>()
@@ -49,7 +49,7 @@ namespace Configuration.Configs
                     options.LoginPath = "/api/Auth/login-cookie";
                     options.AccessDeniedPath = "/denied";
                     options.Cookie.Name = "hangfire_auth";
-                    options.Cookie.SameSite = SameSiteMode.Lax;
+                    options.Cookie.SameSite = env.IsDevelopment() ? SameSiteMode.Lax : SameSiteMode.None;
                     options.Cookie.HttpOnly = true;
                     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                     options.ExpireTimeSpan = TimeSpan.FromMinutes(config.GetValue<int>("Jwt:DurationInMinutes"));

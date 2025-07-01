@@ -14,7 +14,7 @@ builder.Host.UseSerilog();
 builder.Services
     .AddAppConfig(builder.Configuration)
     .AddDatabaseConfig(builder.Configuration, builder.Environment)
-    .AddAuthConfig(builder.Configuration)
+    .AddAuthConfig(builder.Configuration, builder.Environment)
     .AddCacheConfig(builder.Configuration)
     .AddCorsConfig()
     .AddSwaggerConfig()
