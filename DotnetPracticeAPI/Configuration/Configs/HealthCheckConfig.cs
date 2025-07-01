@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Serilog;
 using StackExchange.Redis;
 
 namespace Configuration.Configs
@@ -26,7 +27,10 @@ namespace Configuration.Configs
             }
             else
             {
-                var redis = ConnectionMultiplexer.Connect(RedisConfig.GetRedisProductionOptions(config));
+                var options = RedisConfig.GetRedisProductionOptions(config);
+                var redis = ConnectionMultiplexer.Connect(options);
+
+                Log.Information($"OPTIONS PASSWORD: {options.Password}");
 
                 services.AddHealthChecks()
                     .AddNpgSql(
