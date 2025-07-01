@@ -19,7 +19,7 @@ builder.Services
     .AddCorsConfig()
     .AddSwaggerConfig()
     .AddRateLimitConfig(builder.Configuration)
-    .AddHealthCheckConfig(builder.Configuration)
+    .AddHealthCheckConfig(builder.Configuration, builder.Environment)
     .AddHangfireConfig(builder.Configuration, builder.Environment)
     .AddRedisConfig(builder.Configuration, builder.Environment)
     .AddSignalRConfig();
