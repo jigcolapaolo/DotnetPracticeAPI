@@ -27,7 +27,7 @@ namespace Configuration.Configs
             else
             {
 
-                var redis = ConnectionMultiplexer.Connect(config.GetConnectionString("RedisConnection")!);
+                var redis = ConnectionMultiplexer.Connect(RedisConfig.GetRedisProductionOptions(config));
 
                 services.AddHealthChecks()
                     .AddNpgSql(

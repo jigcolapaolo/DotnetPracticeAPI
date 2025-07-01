@@ -11,8 +11,7 @@ namespace Configuration.Configs
         {
             return new ConfigurationOptions
             {
-                EndPoints = { { "redis-19846.crce181.sa-east-1-2.ec2.redns.redis-cloud.com", 19846 } },
-                User = "default",
+                EndPoints = { "steady-wren-42669.upstash.io:6379" },
                 Password = config["Redis:Password"],
                 Ssl = true,
                 AbortOnConnectFail = false
@@ -28,12 +27,18 @@ namespace Configuration.Configs
                 if (env.IsDevelopment())
                     multiplexer = ConnectionMultiplexer.Connect(config.GetConnectionString("RedisConnection")!);
                 else
-                    multiplexer = ConnectionMultiplexer.Connect(config.GetConnectionString("RedisConnection")!);
+                    multiplexer = ConnectionMultiplexer.Connect(GetRedisProductionOptions(config));
 
-
-                services.AddSingleton<IConnectionMultiplexer>(multiplexer);
-                services.AddScoped<ICacheService, RedisCacheService>();
-
+                if (multiplexer.IsConnected)
+                {
+                    services.AddSingleton<IConnectionMultiplexer>(multiplexer);
+                    services.AddScoped<ICacheService, RedisCacheService>();
+                }
+                else
+                {
+                    Log.Warning("Redis no conectado. Se usará NullCacheService.");
+                    services.AddScoped<ICacheService, NullCacheService>();
+                }
             }
             catch (Exception ex)
             {

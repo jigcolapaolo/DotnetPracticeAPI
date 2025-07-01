@@ -16,23 +16,28 @@ namespace Configuration.Configs
                 if (env.IsDevelopment())
                     multiplexer = ConnectionMultiplexer.Connect(config.GetConnectionString("RedisConnection")!);
                 else
-                    multiplexer = ConnectionMultiplexer.Connect(config.GetConnectionString("RedisConnection")!);
+                    multiplexer = ConnectionMultiplexer.Connect(RedisConfig.GetRedisProductionOptions(config));
 
 
-                services.AddHangfire(cfg =>
-
-                    cfg.UseRedisStorage(multiplexer, new RedisStorageOptions
-                    {
-                        Prefix = "hangfire:",
-                        Db = 1,
-                    }
-                ));
-
-                services.AddHangfireServer(options =>
+                if (multiplexer.IsConnected)
                 {
-                    options.WorkerCount = 4;
-                });
+                    services.AddHangfire(cfg =>
 
+                        cfg.UseRedisStorage(multiplexer, new RedisStorageOptions
+                        {
+                            Prefix = "hangfire:",
+                            Db = 1,
+                        }));
+
+                    services.AddHangfireServer(options =>
+                    {
+                        options.WorkerCount = 4;
+                    });
+                }
+                else
+                {
+                    Log.Warning("Hangfire no se configuró porque Redis no está conectado.");
+                }
             }
             catch (Exception ex)
             {
