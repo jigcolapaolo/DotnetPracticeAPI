@@ -30,16 +30,10 @@ namespace Configuration.Configs
                 else
                     multiplexer = ConnectionMultiplexer.Connect(config.GetConnectionString("RedisConnection")!);
 
-                if (multiplexer.IsConnected)
-                {
-                    services.AddSingleton<IConnectionMultiplexer>(multiplexer);
-                    services.AddScoped<ICacheService, RedisCacheService>();
-                }
-                else
-                {
-                    Log.Warning("Redis no conectado. Se usará NullCacheService.");
-                    services.AddScoped<ICacheService, NullCacheService>();
-                }
+
+                services.AddSingleton<IConnectionMultiplexer>(multiplexer);
+                services.AddScoped<ICacheService, RedisCacheService>();
+
             }
             catch (Exception ex)
             {

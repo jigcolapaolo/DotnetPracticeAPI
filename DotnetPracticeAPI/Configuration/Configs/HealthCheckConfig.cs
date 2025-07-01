@@ -23,7 +23,6 @@ namespace Configuration.Configs
                         tags: ["cache", "redis"],
                         failureStatus: HealthStatus.Degraded
                     );
-
             }
             else
             {
