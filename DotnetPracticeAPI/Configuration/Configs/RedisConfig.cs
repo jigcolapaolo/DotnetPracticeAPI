@@ -7,11 +7,26 @@ namespace Configuration.Configs
 {
     public static class RedisConfig
     {
-        public static IServiceCollection AddRedisConfig(this IServiceCollection services, IConfiguration config)
+        public static IServiceCollection AddRedisConfig(this IServiceCollection services, IConfiguration config, IHostEnvironment env)
         {
             try
             {
-                var multiplexer = ConnectionMultiplexer.Connect(config.GetConnectionString("RedisConnection")!);
+                // Options for production Redis
+                var redisOptions = new ConfigurationOptions
+                {
+                    EndPoints = { "redis-19846.crce181.sa-east-1-2.ec2.redns.redis-cloud.com:19846" },
+                    User = "default",
+                    Password = config["Redis:Password"],
+                    Ssl = true,
+                    AbortOnConnectFail = false
+                };
+
+                ConnectionMultiplexer multiplexer;
+
+                if (env.IsDevelopment())
+                    multiplexer = ConnectionMultiplexer.Connect(config.GetConnectionString("RedisConnection")!);
+                else
+                    multiplexer = ConnectionMultiplexer.Connect(redisOptions);
 
                 if (multiplexer.IsConnected)
                 {

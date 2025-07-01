@@ -20,8 +20,8 @@ builder.Services
     .AddSwaggerConfig()
     .AddRateLimitConfig(builder.Configuration)
     .AddHealthCheckConfig(builder.Configuration)
-    .AddHangfireConfig(builder.Configuration)
-    .AddRedisConfig(builder.Configuration)
+    .AddHangfireConfig(builder.Configuration, builder.Environment)
+    .AddRedisConfig(builder.Configuration, builder.Environment)
     .AddSignalRConfig();
 
 
