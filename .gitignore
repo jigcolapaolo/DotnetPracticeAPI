@@ -4,7 +4,6 @@
 ## Get latest from `dotnet new gitignore`
 
 **/Logs/
-**/Migrations/
 **/Uploads/
 **/appsettings.Development.json
 **/appsettings.Local.json

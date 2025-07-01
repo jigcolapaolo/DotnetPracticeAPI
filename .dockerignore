@@ -23,5 +23,4 @@ secrets.json
 **/appsettings.Local.json
 
 **/Logs/
-**/Migrations/
 **/Uploads/
