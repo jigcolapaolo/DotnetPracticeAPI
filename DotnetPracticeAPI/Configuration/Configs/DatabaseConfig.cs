@@ -5,10 +5,18 @@ namespace Configuration.Configs
 {
     public static class DatabaseConfig
     {
-        public static IServiceCollection AddDatabaseConfig (this IServiceCollection services, IConfiguration config)
+        public static IServiceCollection AddDatabaseConfig (this IServiceCollection services, IConfiguration config, IHostEnvironment env)
         {
-            services.AddDbContext<AppDbContext>(opt =>
-                opt.UseSqlServer(config.GetConnectionString("DefaultConnection")));
+            if (env.IsDevelopment())
+            {
+                services.AddDbContext<AppDbContext>(opt =>
+                    opt.UseSqlServer(config.GetConnectionString("DefaultConnection")));
+
+                return services;
+            }
+
+            services.AddDbContext<AppDbContext>(opt => opt.UseNpgsql(config.GetConnectionString("DefaultConnection")));
+
 
             return services;
         }
