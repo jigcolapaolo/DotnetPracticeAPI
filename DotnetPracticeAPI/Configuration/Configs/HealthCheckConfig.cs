@@ -5,10 +5,10 @@ namespace Configuration.Configs
 {
     public static class HealthCheckConfig
     {
-        public static IServiceCollection AddHealthCheckConfig (this IServiceCollection services, IConfiguration config, IHostEnvironment host)
+        public static IServiceCollection AddHealthCheckConfig (this IServiceCollection services, IConfiguration config, IHostEnvironment env)
         {
 
-            if (host.IsDevelopment())
+            if (env.IsDevelopment())
             {
                 services.AddHealthChecks()
                     .AddSqlServer(
@@ -26,16 +26,7 @@ namespace Configuration.Configs
             }
             else
             {
-                var redisOptions = new ConfigurationOptions
-                {
-                    EndPoints = { "redis-19846.crce181.sa-east-1-2.ec2.redns.redis-cloud.com:19846" },
-                    User = "default",
-                    Password = config["Redis:Password"],
-                    Ssl = true,
-                    AbortOnConnectFail = false
-                };
-
-                var redis = ConnectionMultiplexer.Connect(redisOptions);
+                var redis = ConnectionMultiplexer.Connect(RedisConfig.GetRedisProductionOptions(config));
 
                 services.AddHealthChecks()
                     .AddNpgSql(
