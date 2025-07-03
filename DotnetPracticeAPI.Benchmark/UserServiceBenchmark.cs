@@ -1,5 +1,6 @@
 ﻿using Application.DTOs;
 using Application.Interfaces;
+using Application.Interfaces.Services;
 using Application.Services;
 using AutoMapper;
 using BenchmarkDotNet.Attributes;
@@ -24,6 +25,7 @@ namespace DotnetPracticeAPI.Benchmark
         private UserService _userService = default!;
         private CreateUserDto _dto = default!;
         private Mock<IValidator<CreateUserDto>> _validatorMock = default!;
+        private Mock<ICacheService> _cacheMock = default!;
 
         [GlobalSetup]
         public void Setup()
@@ -31,6 +33,8 @@ namespace DotnetPracticeAPI.Benchmark
             var uowMock = new Mock<IUnitOfWork>();
             uowMock.Setup(u => u.Users.AddAsync(It.IsAny<User>())).Returns(Task.CompletedTask);
             uowMock.Setup(u => u.SaveChangesAsync()).ReturnsAsync(1);
+
+            _cacheMock = new Mock<ICacheService>();
 
             var config = new MapperConfiguration(cfg =>
             {
@@ -42,7 +46,7 @@ namespace DotnetPracticeAPI.Benchmark
             _validatorMock.Setup(v => v.Validate(It.IsAny<CreateUserDto>()))
                 .Returns(new FluentValidation.Results.ValidationResult());
 
-            _userService = new UserService(uowMock.Object, config.CreateMapper(), _validatorMock.Object);
+            _userService = new UserService(uowMock.Object, config.CreateMapper(), _validatorMock.Object, _cacheMock.Object);
 
             _dto = new CreateUserDto
             {

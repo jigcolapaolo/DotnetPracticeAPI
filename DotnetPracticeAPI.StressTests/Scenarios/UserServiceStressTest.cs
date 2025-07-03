@@ -1,5 +1,6 @@
 ﻿using Application.DTOs;
 using Application.Interfaces;
+using Application.Interfaces.Services;
 using Application.Services;
 using AutoMapper;
 using Domain.Entities;
@@ -18,11 +19,11 @@ namespace DotnetPracticeAPI.StressTests.Scenarios
     {
         public static void Run(int userCount, int durationSec)
         {
-            var (uowMock, mapper, validatorMock) = ConfigureMocks();
+            var (uowMock, mapper, validatorMock, cacheMock) = ConfigureMocks();
 
             var scenario = Scenario.Create("create_users_stres", async ctx =>
             {
-                var service = new UserService(uowMock.Object, mapper, validatorMock.Object);
+                var service = new UserService(uowMock.Object, mapper, validatorMock.Object, cacheMock.Object);
 
                 var response = await service.CreateAsync(new CreateUserDto
                 {
@@ -44,7 +45,7 @@ namespace DotnetPracticeAPI.StressTests.Scenarios
                 .Run();
         }
 
-        private static (Mock<IUnitOfWork>, IMapper, Mock<IValidator<CreateUserDto>>) ConfigureMocks()
+        private static (Mock<IUnitOfWork>, IMapper, Mock<IValidator<CreateUserDto>>, Mock<ICacheService>) ConfigureMocks()
         {
             var uowMock = new Mock<IUnitOfWork>();
             uowMock.Setup(u => u.Users.AddAsync(It.IsAny<User>()))
@@ -66,8 +67,10 @@ namespace DotnetPracticeAPI.StressTests.Scenarios
             validatorMock.Setup(v => v.Validate(It.IsAny<CreateUserDto>()))
                 .Returns(new FluentValidation.Results.ValidationResult());
 
+            var cacheMock = new Mock<ICacheService>();
 
-            return (uowMock, config.CreateMapper(), validatorMock);
+
+            return (uowMock, config.CreateMapper(), validatorMock, cacheMock);
             
         }
     }
