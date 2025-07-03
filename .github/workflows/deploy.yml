@@ -20,6 +20,7 @@ jobs:
 
       - name: 🧪 Restore and test (unit tests only)
         run: |
+          export ASPNETCORE_ENVIRONMENT=Development
           dotnet restore
           dotnet build --no-restore --configuration Release
           dotnet test DotnetPracticeAPI.Tests/DotnetPracticeAPI.Tests.csproj --no-build --verbosity normal
