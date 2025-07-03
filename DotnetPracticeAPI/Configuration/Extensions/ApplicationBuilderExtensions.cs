@@ -88,6 +88,8 @@ namespace Configuration.Extensions
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
 
+            if (!db.Database.CanConnect() && env.IsDevelopment()) return app;
+
             if (env.IsProduction())
             {
                 await db.Database.MigrateAsync();
