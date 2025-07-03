@@ -1,0 +1,35 @@
+name: Build and Deploy to Render
+
+on:
+  push:
+    branches:
+      - main  # main branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
+
+      - name: 🧰 Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: 🧪 Restore and test
+        run: |
+          dotnet restore
+          dotnet build --no-restore --configuration Release
+          dotnet test --no-build --verbosity normal
+
+      - name: 🐳 Build Docker image
+        run: |
+          docker build -t my-api-image -f DotnetPracticeAPI/Dockerfile .
+
+      - name: 🚀 Deploy to Render
+        uses: render-examples/deploy-to-render-action@v1
+        with:
+          service-id: ${{ secrets.RENDER_SERVICE_ID }}
+          api-key: ${{ secrets.RENDER_API_KEY }}
