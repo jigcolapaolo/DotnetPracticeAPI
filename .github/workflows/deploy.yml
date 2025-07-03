@@ -28,8 +28,9 @@ jobs:
         run: |
           docker build -t my-api-image -f DotnetPracticeAPI/Dockerfile .
 
-      - name: 🚀 Deploy to Render
-        uses: render-examples/deploy-to-render-action@v1
-        with:
-          service-id: ${{ secrets.RENDER_SERVICE_ID }}
-          api-key: ${{ secrets.RENDER_API_KEY }}
+      - name: 🚀 Trigger Render Deploy
+        run: |
+          curl -X POST https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploys \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+            -H "Content-Type: application/json"
+
