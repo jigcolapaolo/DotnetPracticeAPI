@@ -81,14 +81,23 @@ namespace Configuration.Extensions
         }
 
 
-        public static async Task<IApplicationBuilder> ApplyMigrationsAndSeed(this IApplicationBuilder app)
+        public static async Task<IApplicationBuilder> ApplyMigrationsAndSeed(this IApplicationBuilder app, IHostEnvironment env)
         {
             using var scope = app.ApplicationServices.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
 
-            await db.Database.MigrateAsync();
+            if (env.IsProduction())
+            {
+                await db.Database.MigrateAsync();
+            }
+            else
+            {
+                if (!db.Database.CanConnect())
+                    db.Database.EnsureCreated();
+            }
+
 
             if (!await db.Users.AnyAsync())
             {

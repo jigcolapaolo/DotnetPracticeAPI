@@ -48,7 +48,7 @@ app.MapHealthCheckEndpoints();
 
 app.MapControllers();
 
-await app.ApplyMigrationsAndSeed();
+await app.ApplyMigrationsAndSeed(builder.Environment);
 
 app.Run();
 
