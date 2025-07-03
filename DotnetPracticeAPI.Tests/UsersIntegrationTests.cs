@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace DotnetPracticeAPI.Tests
 {
+    [Trait("Category", "Integration")]
     public class UsersIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
     {
         private readonly HttpClient _client;
